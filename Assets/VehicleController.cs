@@ -3,7 +3,10 @@ using UnityEngine.InputSystem;
 
 public class VehicleController : MonoBehaviour
 {
-    private float desired_acceleration;
+    private Vector2 movementInput;
+
+    public float impulse;
+    public float turnrate;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -13,13 +16,26 @@ public class VehicleController : MonoBehaviour
 
     void OnMove(InputValue action)
     {
-        var movement = action.Get<Vector2>();
-        desired_acceleration = movement.y;
+        movementInput = action.Get<Vector2>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        GetComponent<Rigidbody>().AddRelativeForce(desired_acceleration*5, 0, 0);
+        Rigidbody rb = GetComponent<Rigidbody>();
+
+        // forward/backward movement
+        rb.AddRelativeForce(movementInput.y * impulse, 0, 0);
+
+        // sideways movement
+        rb.AddRelativeForce(0, 0, -movementInput.x * impulse);
+
+        float dx = (Mouse.current.position.x.value - Screen.width / 2) / turnrate;
+        float rotationSpeed = 0.05f;
+
+        if (Mathf.Abs(dx) > 0.01f)
+        {
+            transform.Rotate(0, dx * rotationSpeed, 0);
+        }
     }
 }
