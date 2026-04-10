@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class VehicleController : MonoBehaviour
 {
@@ -7,13 +8,20 @@ public class VehicleController : MonoBehaviour
 
     public float impulse;
     public float turnrate;
-
+    public float starttime;
+    public TextMeshProUGUI timelbl;
+    public TextMeshProUGUI laplbl;
     public CheckpointController target;
+    public CheckpointController firstCheckpoint;
+    public int lapCount;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        starttime = Time.time;
+
+        target.left.materials[0].color = Color.red;
+        target.right.materials[0].color = Color.red;
     }
 
     void OnMove(InputValue action)
@@ -39,5 +47,12 @@ public class VehicleController : MonoBehaviour
         {
             transform.Rotate(0, dx * rotationSpeed, 0);
         }
+
+        timelbl.text = string.Format(
+            "Current Time: {0:F2}s",
+            Time.time - starttime
+        );
+
+        laplbl.text = "Current Lap: " + lapCount;
     }
 }
